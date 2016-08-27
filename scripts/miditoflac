@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+#
+# ./miditoflac file.mid
+# (Generates a file.flac as output)
+#
+# Simple utility to synthesize mid files
+# to audio files (flac).
+#
+# The final flac file uses a sample rate
+# of 22050Hz and has only 1 channel.
+#
+# This script requires that ffmpeg and
+# timidity (including the soundfonts) are
+# properly installed on your system.
+
+midifile=$1
+tmpwav="${midifile%.mid}_tmp.wav"
+flacout="${midifile%.mid}.flac"
+
+if [ -z "$midifile" ]; then
+	echo "Usage: $0 file.mid"
+	exit
+fi
+
+
+timidity "$midifile" -Ow -o "$tmpwav"
+ffmpeg -i "$tmpwav" -ar 22050 -ac 1 -c:a flac "$flacout"
+
+rm "$tmpwav"
