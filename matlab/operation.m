@@ -10,7 +10,7 @@ for i = 1 : n/2 % creates filters and performs operation
     [B, A] = butter(4, 0.000907,'low');
     band = filter(B,A,band); % butterworth lowpass filter
     band = diff(band); % first order difference
-    band = band(band>=0); % half wave rectifier
+    band(band<0) = 0; % half wave rectifier
     if size(result,2) < size(band,2)
         result(size(band,2)) = 0;
     elseif size(band,2) < size(result,2)
