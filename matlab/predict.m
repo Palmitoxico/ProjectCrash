@@ -9,5 +9,4 @@ function y = predict(X, A)
 [lin col] = size(X);
 X = [X; ones(1,col)];
 
-y = X * A
-
+y = A * X;
