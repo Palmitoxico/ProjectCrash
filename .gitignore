@@ -7,3 +7,4 @@ bin/
 *.wav
 *.mid
 *.txt
+.DS_Store
