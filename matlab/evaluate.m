@@ -42,8 +42,14 @@ while ( i <= ly ) && ( j <= ld )
    end      
 end
 
-r = h/ld;
-p = h/ly;
-F = 2*p*r/(p+r);
+if (P == 0) || (R == 0)
+    r = 0;
+    p = 0;   
+    F = 0;
+else 
+    r = R/ld;
+    p = P/ly;
+    F = 2*p*r/(p+r);
+end
 
 end
