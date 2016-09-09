@@ -2,3 +2,9 @@
 *.log
 *.out
 *.aux
+bin/
+*.flac
+*.wav
+*.mid
+*.txt
+.DS_Store
