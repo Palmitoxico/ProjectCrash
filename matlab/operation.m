@@ -1,5 +1,10 @@
 function result = operation(data,FILT)
 n = size(FILT, 2);
+avr = mean(data);
+vari = var(data);
+data = data - avr;
+vari = sqrt(vari);
+data = data/vari;
 for i = 1 : n/2 % creates filters and performs operation
     odd = 1:2:n;
     even = 2:2:n;
@@ -11,6 +16,7 @@ for i = 1 : n/2 % creates filters and performs operation
     band = diff(band); % first order difference
     band(band<0) = 0; % half wave rectifier
     band = transpose(band);
+    band = downsample(band,200);
     if i == 1
         result(size(band,2)) = 0;
     end
