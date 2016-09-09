@@ -28,15 +28,15 @@ ly = length(y);
 ld = length(d);
 
 while ( i <= ly ) && ( j <= ld ) 
-   if ( norm(d(j) - y(i)) <= e ) % if its a hit
+   if ( abs(d(j) - y(i)) <= e ) % if its a hit
        h = h + 1;
        j = j + 1;
        i = i + 1;
 
-   elseif ( norm(d(j) - y(i)) > e ) && ( d(j) < y(i) ) % if its a mistake in d
+   elseif ( abs(d(j) - y(i)) > e ) && ( d(j) < y(i) ) % if its a mistake in d
             j = j + 1;
 
-   elseif ( norm(d(j) - y(i)) > e ) && ( d(j) > y(i) ) % if its a mistake in y
+   elseif ( abs(d(j) - y(i)) > e ) && ( d(j) > y(i) ) % if its a mistake in y
             i = i + 1;
   
    end      
