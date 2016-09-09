@@ -3,3 +3,7 @@
 *.out
 *.aux
 bin/
+*.flac
+*.wav
+*.mid
+*.txt
