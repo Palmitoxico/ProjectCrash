@@ -21,10 +21,10 @@ figure;
 plot(t, y, 'k');
 
 for i = 1 : length(marks)
-  line( [marks(i)-tolerance, marks(i)+tolerance], [ymax, ymax], 'r');
-  line( [marks(i)-tolerance, marks(i)+tolerance], [ymin, ymin], 'r');
-  line( [marks(i)-tolerance, marks(i)-tolerance], [ymax, ymin], 'r');
-  line( [marks(i)+tolerance, marks(i)+tolerance], [ymax, ymin], 'r');
+  line( [marks(i)-tolerance, marks(i)+tolerance], [ymax, ymax]);
+  line( [marks(i)-tolerance, marks(i)+tolerance], [ymin, ymin]);
+  line( [marks(i)-tolerance, marks(i)-tolerance], [ymax, ymin]);
+  line( [marks(i)+tolerance, marks(i)+tolerance], [ymax, ymin]);
 end
 
 end
