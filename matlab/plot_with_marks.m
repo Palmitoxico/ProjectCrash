@@ -18,7 +18,7 @@ t = 1 : length(y);
 t = (t-1)/fs;
 
 figure;
-plot(t, y);
+plot(t, y, 'k');
 
 for i = 1 : length(marks)
   line( [marks(i)-tolerance, marks(i)+tolerance], [ymax, ymax]);
