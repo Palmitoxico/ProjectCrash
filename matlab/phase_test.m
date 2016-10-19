@@ -1,6 +1,5 @@
 function n = phase_test(period, signal)
 % n = phase_test(period, signal)
-signal = signal - mean(signal);
 max_corr = 0;
 best_phase = 0;
 for i = 1 : period

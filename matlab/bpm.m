@@ -1,6 +1,7 @@
 function x =  bpm(audiofile)
 
-[audio,fs] = audioread(audiofile);
+%[audio,fs] = audioread(audiofile);
+[audio fs bps] = wavread(audiofile);
 [b,a] = butter(4,2*1000/fs);
 audio = filter(b,a,audio);
 FILT = filter_gen(6, 2, 160, fs);
