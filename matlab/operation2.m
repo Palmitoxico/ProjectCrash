@@ -1,9 +1,15 @@
-function result = operation(data,FILT)
+function result = operation2(data,FILT)
 n = size(FILT, 2);
+avr = mean(data);
+vari = var(data);
+data = data - avr;
+vari = sqrt(vari);
+data = data/vari;
+[b, a] = butter(4,0.0226);
+data = filter(b,a,data);
 for i = 1 : n/2 % creates filters and performs operation
     odd = 1:2:n;
     even = 2:2:n;
-    result = 0;
     [B, A] = butter(4,FILT([odd(i) even(i)]));
     band = filter(B,A,data); % butterworth bandpass filter
     band  = abs(band); % full wave rectifier
@@ -11,13 +17,15 @@ for i = 1 : n/2 % creates filters and performs operation
     band = filter(B,A,band); % butterworth lowpass filter
     band = diff(band); % first order difference
     band(band<0) = 0; % half wave rectifier
-    if size(result,2) < size(band,2)
+    band = transpose(band);
+    band = downsample(band,200);
+    result(size(band,2)) = 0;
+    if i == 1
         result(size(band,2)) = 0;
-    elseif size(band,2) < size(result,2)
-        band(size(result,2)) = 0;
     end
-    result = result + band; % sum
+    result(i,:) =  band; % store bands in matrix
+    %result = result + band;
 end
-
 end
+%% 
 
