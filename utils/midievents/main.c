@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 
 	if (argc < 2)
 	{
-		printf("Usage: %s Filename [DeltaTime]\n");
+		printf("Usage: Filename [DeltaTime]\n");
 		return -1;
 	}
 	else if (argc == 2)
