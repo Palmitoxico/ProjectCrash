@@ -4,7 +4,7 @@ function k = pitch_acc(x)
 % Returns the lag k for which (x(t)*x(t-k))^2 is the greatest
 
 % Calculate autocorrelation
-X = fft(x, length(x));
+X = fft(x, length(x)*2);
 x_acc = abs(ifft(X .* conj(X)));
 
 %% So far, we have an autocorrelation function
@@ -16,7 +16,7 @@ x_acc = abs(ifft(X .* conj(X)));
 x_acc0 = zeros(1,floor(length(x_acc)/2));
 max_so_far = -100;
 max_i = 0;
-for i = 5000 : floor(length(x_acc0)/2);
+for i = 1000 : floor(length(x_acc0)/2);
   x_acc0(i) = x_acc(i);% - x_acc(i*2);
   if x_acc0(i) > max_so_far
     max_so_far = x_acc0(i);
@@ -28,5 +28,5 @@ end
 %plot(x_acc0);
 %hold on;
 %plot(max_i, max_so_far, 'ro');
-
+%pause;
 k = max_i-1;
