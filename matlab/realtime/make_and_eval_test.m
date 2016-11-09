@@ -1,6 +1,6 @@
 % window is the data size in [s]
 
-function [m, v] = make_and_eval_test(directory,window)
+function [m, v, t] = make_and_eval_test(directory,window)
   d = dir([directory '/*.wav']);
   d2 = dir([directory '/*.txt']);
   f0 = [];
@@ -8,7 +8,7 @@ function [m, v] = make_and_eval_test(directory,window)
   p = [];
   f = [];
 
-  for i = 1:length(d)-1
+ for i = 1:length(d)
     ref = load([directory  '/'  d2(i).name]);
     [audio,fs,~] = wavread([directory  '/'  d(i).name]);
     audiosize = size(audio,1);
@@ -24,20 +24,23 @@ function [m, v] = make_and_eval_test(directory,window)
         end
         
         [bpm, phase] = bpm_and_phase_test(audio(j:window_end,1),fs);
-        aux = bpm_phase_beats_test(bpm,phase,window);
-        s = size(aux,2);
-        aux = aux + k*window;
-        t(1,(beat_index):(beat_index-1+s)) = aux;
-        beat_index = beat_index + s;    
-        k = k + 1;
+        
+        if bpm ~= 0
+            aux = bpm_phase_beats_test(bpm,phase,window);
+            s = size(aux,2);
+            aux = aux + k*window;
+            t(1,(beat_index):(beat_index-1+s)) = aux;
+            beat_index = beat_index + s;    
+            k = k + 1;
+        end
     end
     
     [r(i), p(i), f(i)] = evaluate(t, ref);
     f0 = [f0 f(i)];
    end;
-%   r
-%   p
-%   f
+  r
+  p
+  f
   m = mean(f0);
   v = var(f0);
 

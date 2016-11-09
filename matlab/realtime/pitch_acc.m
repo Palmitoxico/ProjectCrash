@@ -16,7 +16,7 @@ x_acc = abs(ifft(X .* conj(X)));
 x_acc0 = zeros(1,floor(length(x_acc)/2));
 max_so_far = -100;
 max_i = 0;
-for i = 1000 : floor(length(x_acc0)/2);
+for i = 1 : floor(length(x_acc0)/2);
   x_acc0(i) = x_acc(i) - x_acc(i*2) - x_acc(i*4);
   if x_acc0(i) > max_so_far
     max_so_far = x_acc0(i);
