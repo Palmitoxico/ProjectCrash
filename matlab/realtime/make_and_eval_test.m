@@ -1,13 +1,13 @@
 % window is the data size in [s]
 
-function [m, v, t] = make_and_eval_test(directory,window)
+function [m, v, score_mean, t] = make_and_eval_test(directory,window)
   d = dir([directory '/*.wav']);
   d2 = dir([directory '/*.txt']);
   f0 = [];
   r = [];
   p = [];
   f = [];
-
+  amlt = [];
  for i = 1:length(d)
     ref = load([directory  '/'  d2(i).name]);
     [audio,fs,~] = wavread([directory  '/'  d(i).name]);
@@ -34,13 +34,16 @@ function [m, v, t] = make_and_eval_test(directory,window)
             k = k + 1;
         end
     end
-    
+    [mainscore(i), ~]= beatEvaluator(t,ref);
     [r(i), p(i), f(i)] = evaluate(t, ref);
     f0 = [f0 f(i)];
+    amlt = [amlt mainscore(i)];
    end;
   r
   p
   f
+  amlt
   m = mean(f0);
   v = var(f0);
+  score_mean = mean(amlt);
 
