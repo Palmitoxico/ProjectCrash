@@ -2,11 +2,15 @@ clear all
 close all
 
 % Calcular funcao de deteccao de onsets (ODF)
+h = odf(x, fs, filterbank);
 
-% Dividir em quadros
-% Para cada quadro {
+% Divide ODF in frames
 
-%% Detectar BPM
+
+% For each frame
+
+%% BPM estimation
+bpm = frame_bpm(frame_odf, fs);
 
 %% Detectar fase
 
