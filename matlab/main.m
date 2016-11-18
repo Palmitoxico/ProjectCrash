@@ -24,6 +24,7 @@ for i = 1 : length(wav_file)
     frame_step_samples = frame_step * fs; % Overlapping frames
 
     n = 0;
+    beat_locations = [];
     % For each frame
     while ((n*frame_step_samples) + frame_length_samples) < file_length
       frame_odf = h(n*frame_step_samples + 1: n*frame_step_samples + frame_length_samples);
@@ -37,7 +38,7 @@ for i = 1 : length(wav_file)
 
     %% Extrapolate predictiono
     p = predict_beats(bpm, phase, t0, tmin, tmax);
-
+      beat_locations = [beat_locations p];
       n = n + 1; % Next frame;
     end;
 
