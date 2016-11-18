@@ -35,6 +35,7 @@ for i = 1 : length(wav_file)
     bpm = frame_bpm(frame_odf, fs);
 
     %% Detectar fase
+	phi = phase(frame_odf, fs, bpm);
 
     %% Extrapolate predictiono
     p = predict_beats(bpm, phase, t0, tmin, tmax);
