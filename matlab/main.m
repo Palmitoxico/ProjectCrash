@@ -46,3 +46,7 @@ for i = 1 : length(wav_file)
     [mainscore , backupscore] = beatEvaluator(beat, truth_table); % evaluator used in competition
     amlt = [amlt mainscore];
 end;
+mean(f0)
+var(f0)
+mean(amlt)
+var(amlt)
