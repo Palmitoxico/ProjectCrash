@@ -6,7 +6,7 @@ file_length = 0; % number of samples within a file
 fs = 0; % sample rate of the file
 
 % Calcular funcao de deteccao de onsets (ODF)
-h = odf(x, fs, filterbank);
+h = odf(audio,fs, n_filters, init_freq, fator);
 
 % Divide ODF in frames
 frame_length = 5; % Frame length, in seconds
