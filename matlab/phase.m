@@ -20,7 +20,7 @@ function phi = phase(odf_frame, fs, bpm)
   %% Initializes the max accumulated
   %% value
   maxacc = 0;
-
+  phi = 0;
   %% Test each phase
   for phasetest = 1
 
@@ -30,23 +30,24 @@ function phi = phase(odf_frame, fs, bpm)
 	
 	for sample = 1
       acc = odf_frame(sample + phasetest);
-	  sample += samppb;
+	  sample = sample + samppb;
 	  
 	  if (sample + phasetest) > length(odf_frame)
 		break;
-	  endif
-	endfor
+      end
+    end
 	
-	phasetest += 1;
+	phasetest = phasetest + 1;
 	
 	if acc > maxacc
 	  phisamp = phasetest;
 	  maxacc = acc;
-	endif
+    end
 
 	if phasetest > samppb
 	  phi = phisamp / fs;
 	  break;
-	endif
-  endfor
+    end
+  end
+ 
 end

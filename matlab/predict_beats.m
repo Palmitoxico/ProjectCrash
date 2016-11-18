@@ -1,4 +1,4 @@
-funtion p = predict_beats(bpm, phase, t0, tmin, tmax)
+function p = predict_beats(bpm, phase, t0, tmin, tmax)
 % p = predict_beats(bpm, phase, t0, tmin, tmax)
 %
 % Predicts beats in future time based on current analysis

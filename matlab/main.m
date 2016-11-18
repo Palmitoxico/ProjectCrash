@@ -6,10 +6,10 @@ fs = 0; % sample rate of the file
 
 f0 = []; % array with f-measure of all files
 amlt = []; % array with amlt of all files
-directory = '' % path to dataset
+directory = '/Users/gustavonishihara/Downloads/train_teste' % path to dataset
 wav_file = dir([directory '/*.wav']);
 truth_file = dir([directory '/*.txt']);
-for i = 1 : length(wav_file)
+for i = 1 : 1
     truth_table = load([directory  '/'  truth_file(i).name]);
     [audio fs] = audioread([directory  '/'  wav_file(i).name]);
     file_length = length(audio);
@@ -40,17 +40,19 @@ for i = 1 : length(wav_file)
     %% Extrapolate predictiono
     t0 = n * frame_step;
     tmin = t0 + frame_length;
-    tmax = t0 + frame_step;
-    p = predict_beats(bpm, phase, t0, tmin, tmax);
+    tmax = tmin + frame_step;
+    p = predict_beats(bpm, phi, t0, tmin, tmax);
       beat_locations = [beat_locations p];
       n = n + 1; % Next frame;
     end;
 
-% Avaliar resultados
 
+    FID = fopen('/Users/gustavonishihara/Downloads/train_teste/teste/teste.txt','w');
+    fprintf(FID,'%f\n',beat_locations);
+    fclose(FID);
     % Avaliar resultados
     [r p F] = evaluate(beat_locations, truth_table); % f-measure
-    f0 = [f0 f];
+    f0 = [f0 F];
     [mainscore , backupscore] = beatEvaluator(beat_locations, truth_table); % evaluator used in competition
     amlt = [amlt mainscore];
 end;
