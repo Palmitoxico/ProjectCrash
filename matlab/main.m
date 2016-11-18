@@ -45,9 +45,9 @@ for i = 1 : length(wav_file)
 % Avaliar resultados
 
     % Avaliar resultados
-    [r p F] = evaluate(beat, truth_table); % f-measure
+    [r p F] = evaluate(beat_locations, truth_table); % f-measure
     f0 = [f0 f];
-    [mainscore , backupscore] = beatEvaluator(beat, truth_table); % evaluator used in competition
+    [mainscore , backupscore] = beatEvaluator(beat_locations, truth_table); % evaluator used in competition
     amlt = [amlt mainscore];
 end;
 mean(f0)
