@@ -2,7 +2,7 @@ clear all
 close all
 
 % Calcular funcao de deteccao de onsets (ODF)
-h = odf(x, fs, filterbank);
+h = odf(audio,fs, n_filters, init_freq, fator);
 
 % Divide ODF in frames
 
