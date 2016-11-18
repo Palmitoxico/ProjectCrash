@@ -4,19 +4,17 @@ close all
 file_length = 0; % number of samples within a file
 fs = 0; % sample rate of the file
 
-directory = '../Dataset/2006'; % path to dataset
 f0 = []; % array with f-measure of all files
 amlt = []; % array with amlt of all files
-directory = '/Users/gustavonishihara/Downloads/train_teste' % path to dataset
+directory = '' % path to dataset
 wav_file = dir([directory '/*.wav']);
 truth_file = dir([directory '/*.txt']);
 for i = 1 : length(wav_file)
     truth_table = load([directory  '/'  truth_file(i).name]);
-    [audio fs bits] = wavread([directory  '/'  wav_file(i).name]);
     [audio fs] = audioread([directory  '/'  wav_file(i).name]);
     file_length = length(audio);
     % Calcular funcao de deteccao de onsets (ODF)
-    h = odf(audio,fs, n_filters, init_freq, fator);
+    h = odf(audio,44100, 6, 60, 1.5);
 
     % Divide ODF in frames
     frame_length = 5; % Frame length, in seconds
