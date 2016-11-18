@@ -3,14 +3,15 @@ close all
 % Global variables
 file_length = 0; % number of samples within a file
 fs = 0; % sample rate of the file
-
-directory = '' % path to dataset
+f0 = []; % array with f-measure of all files
+amlt = []; % array with amlt of all files
+directory = '/Users/gustavonishihara/Downloads/train_teste' % path to dataset
 wav_file = dir([directory '/*.wav']);
 truth_file = dir([directory '/*.txt']);
 for i = 1 : length(wav_file)
     truth_table = load([directory  '/'  truth_file(i).name]);
-    [audio fs bits] = wavread([directory  '/'  wav_file(i).name]);
-    [~ file_length] = size(audio);
+    [audio fs] = audioread([directory  '/'  wav_file(i).name]);
+    file_length = length(audio);
     % Calcular funcao de deteccao de onsets (ODF)
     h = odf(audio,fs, n_filters, init_freq, fator);
 
@@ -37,6 +38,11 @@ for i = 1 : length(wav_file)
 
       n = n + 1; % Next frame;
     end;
-end;
 
-% Avaliar resultados
+
+    % Avaliar resultados
+    [r p F] = evaluate(beat, truth_table); % f-measure
+    f0 = [f0 f];
+    [mainscore , backupscore] = beatEvaluator(beat, truth_table); % evaluator used in competition
+    amlt = [amlt mainscore];
+end;
