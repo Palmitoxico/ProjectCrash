@@ -33,8 +33,8 @@ for i = 1 : length(wav_file)
 
     %% Detectar fase
 
-    %% Extrapolar predicao
-    p = predict_beats(bpm, phase, tmin, tmax);
+    %% Extrapolate predictiono
+    p = predict_beats(bpm, phase, t0, tmin, tmax);
 
       n = n + 1; % Next frame;
     end;
