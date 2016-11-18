@@ -38,6 +38,9 @@ for i = 1 : length(wav_file)
 	phi = phase(frame_odf, fs, bpm);
 
     %% Extrapolate predictiono
+    t0 = n * frame_step;
+    tmin = t0 + frame_length;
+    tmax = t0 + frame_step;
     p = predict_beats(bpm, phase, t0, tmin, tmax);
       beat_locations = [beat_locations p];
       n = n + 1; % Next frame;
