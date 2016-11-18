@@ -15,10 +15,10 @@ frame_step = 2.5; % Frame overlap, in seconds
 frame_length_samples = frame_length * fs; % Samples per frame
 frame_step_samples = frame_step * fs; % Overlapping frames
 
-n = 1;
+n = 0;
 % For each frame
 while ((n*frame_step_samples) + frame_length_samples) < file_length
-  frame_odf = h(n*frame_step_samples : n*frame_step_samples + frame_length_samples);
+  frame_odf = h(n*frame_step_samples + 1: n*frame_step_samples + frame_length_samples);
 
 
 
@@ -29,7 +29,7 @@ bpm = frame_bpm(frame_odf, fs);
 
 %% Extrapolar predicao
 
-
+  n = n + 1; % Next frame;
 end;
 
 
