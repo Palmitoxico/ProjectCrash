@@ -4,13 +4,13 @@ close all
 file_length = 0; % number of samples within a file
 fs = 0; % sample rate of the file
 
-directory = '' % path to dataset
+directory = '../Dataset/2006'; % path to dataset
 wav_file = dir([directory '/*.wav']);
 truth_file = dir([directory '/*.txt']);
 for i = 1 : length(wav_file)
     truth_table = load([directory  '/'  truth_file(i).name]);
     [audio fs bits] = wavread([directory  '/'  wav_file(i).name]);
-    [~ file_length] = size(audio);
+    file_length = length(audio);
     % Calcular funcao de deteccao de onsets (ODF)
     h = odf(audio,fs, n_filters, init_freq, fator);
 
@@ -34,6 +34,7 @@ for i = 1 : length(wav_file)
     %% Detectar fase
 
     %% Extrapolar predicao
+    p = predict_beats(bpm, phase, tmin, tmax);
 
       n = n + 1; % Next frame;
     end;
