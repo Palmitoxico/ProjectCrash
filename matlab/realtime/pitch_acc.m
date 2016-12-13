@@ -24,6 +24,21 @@ for i = 1 : floor(length(x_acc0)/2);
   end;
 end
 
+
+if max_i > 1
+    X = [(max_i-1)^2 max_i-1 1;
+         max_i^2 max_i 1;
+         (max_i+1)^2 max_i+1 1];
+
+    c = inv(X);
+    y = [x_acc0(max_i-1); x_acc0(max_i); x_acc0(max_i+1)];
+    coef = c * y;
+    if coef(1) ~= 0
+      max_i = -coef(2)/(2*coef(1));
+    end
+end
+
+
 %figure;
 %plot(x_acc0);
 %hold on;
