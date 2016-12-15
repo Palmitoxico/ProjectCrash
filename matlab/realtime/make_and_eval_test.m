@@ -26,7 +26,6 @@ function [m, v, score_mean, t] = make_and_eval_test(directory,window)
         end
 
         [bpm, phase] = bpm_and_phase_test(audio(j:window_end,1),fs);
-
         if bpm ~= 0
             aux = bpm_phase_beats_test(bpm,phase,window);
             s = size(aux,2);
