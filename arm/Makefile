@@ -23,8 +23,6 @@ debug: $(PRJ_NAME).elf
 
 $(PRJ_NAME).elf: $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $@ $(LDFLAGS)
-	$(OBJCOPY) -O ihex $(PRJ_NAME).elf $(PRJ_NAME).hex
-	$(OBJCOPY) -O binary $(PRJ_NAME).elf $(PRJ_NAME).bin
 	arm-none-eabi-size $(PRJ_NAME).elf
 
 .c.o:
