@@ -2,7 +2,7 @@ PRJ_NAME   = Template
 CC         = arm-none-eabi-gcc
 SRC        = $(wildcard src/*.c)
 ASRC       = $(wildcard src/*.s)
-OBJ        = $(SRC:.c=.o) $(ASRC:.s=.o)
+OBJ        = $(SRC:.c=.o) $(ASRC:.s=.o) $(wildcard lib/*.a)
 OBJCOPY    = arm-none-eabi-objcopy
 OBJDUMP    = arm-none-eabi-objdump
 PROGRAMMER = openocd
@@ -11,7 +11,7 @@ DEVICE     = STM32F407xx
 OPTIMIZE   = -Og
 DBGFLAGS   = -g3
 LDSCRIPT   = stm32f407vgtx.ld
-CFLAGS     = -Wall -mcpu=cortex-m4 -mlittle-endian -mfloat-abi=hard -mfpu=fpv4-sp-d16  -mthumb -I inc/ -D $(DEVICE)
+CFLAGS     = -Wall -mcpu=cortex-m4 -mtune=cortex-m4 -mlittle-endian -mfloat-abi=hard -mfpu=fpv4-sp-d16  -mthumb -D ARM_MATH_CM4 -D __FPU_PRESENT -I inc/ -D $(DEVICE)
 ASFLAGS    =  $(CFLAGS)
 LDFLAGS    = -T $(LDSCRIPT) -Wl,--gc-sections --specs=nano.specs --specs=nosys.specs
 
@@ -22,6 +22,7 @@ debug: CFLAGS += $(DBGFLAGS)
 debug: $(PRJ_NAME).elf
 
 $(PRJ_NAME).elf: $(OBJ)
+	$(MAKE) -C lib
 	$(CC) $(CFLAGS) $(OBJ) -o $@ $(LDFLAGS)
 	arm-none-eabi-size $(PRJ_NAME).elf
 
@@ -32,6 +33,7 @@ $(PRJ_NAME).elf: $(OBJ)
 	$(CC) -c $(ASFLAGS) $< -o $@
 
 clean:
+	$(MAKE) clean -C lib
 	rm -f $(OBJ) *.map *.elf *.hex
 
 burn:
