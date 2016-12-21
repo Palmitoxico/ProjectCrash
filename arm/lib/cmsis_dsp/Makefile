@@ -10,7 +10,7 @@ LIBFILE		= ../arm_math.a
 all: $(LIBFILE)
 
 $(LIBFILE): $(OBJ)
-	ar rcs $@ $(OBJ)
+	arm-none-eabi-ar rcs $@ $(OBJ)
 
 .c.o:
 	$(CC) -c $(CFLAGS) $< -o $@
