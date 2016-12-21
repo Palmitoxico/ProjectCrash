@@ -1,8 +1,9 @@
-PRJ_NAME   = Template
+PRJ_NAME   = BeatDetection
 CC         = arm-none-eabi-gcc
 SRC        = $(wildcard src/*.c)
 ASRC       = $(wildcard src/*.s)
-OBJ        = $(SRC:.c=.o) $(ASRC:.s=.o) $(wildcard lib/*.a)
+OBJ        = $(SRC:.c=.o) $(ASRC:.s=.o)
+LIB        = lib/arm_math.a
 OBJCOPY    = arm-none-eabi-objcopy
 OBJDUMP    = arm-none-eabi-objdump
 PROGRAMMER = openocd
@@ -11,7 +12,7 @@ DEVICE     = STM32F407xx
 OPTIMIZE   = -Og
 DBGFLAGS   = -g3
 LDSCRIPT   = stm32f407vgtx.ld
-CFLAGS     = -Wall -mcpu=cortex-m4 -mtune=cortex-m4 -mlittle-endian -mfloat-abi=hard -mfpu=fpv4-sp-d16  -mthumb -D ARM_MATH_CM4 -D __FPU_PRESENT -I inc/ -D $(DEVICE)
+CFLAGS     = -Wall -mcpu=cortex-m4 -mtune=cortex-M4 -mlittle-endian -mfloat-abi=hard -mfpu=fpv4-sp-d16  -mthumb -D ARM_MATH_CM4 -I inc/ -D $(DEVICE)
 ASFLAGS    =  $(CFLAGS)
 LDFLAGS    = -T $(LDSCRIPT) -Wl,--gc-sections --specs=nano.specs --specs=nosys.specs
 
@@ -21,10 +22,12 @@ all: $(PRJ_NAME).elf
 debug: CFLAGS += $(DBGFLAGS)
 debug: $(PRJ_NAME).elf
 
-$(PRJ_NAME).elf: $(OBJ)
-	$(MAKE) -C lib
-	$(CC) $(CFLAGS) $(OBJ) -o $@ $(LDFLAGS)
+$(PRJ_NAME).elf: $(LIB) $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) $(LIB) -o $@ $(LDFLAGS)
 	arm-none-eabi-size $(PRJ_NAME).elf
+
+$(LIB):
+	$(MAKE) -C lib
 
 .c.o:
 	$(CC) -c $(CFLAGS) $< -o $@

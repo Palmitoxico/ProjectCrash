@@ -4,7 +4,7 @@ OBJ        = $(SRC:.c=.o)
 OBJCOPY    = arm-none-eabi-objcopy
 OBJDUMP    = arm-none-eabi-objdump
 OPTIMIZE   = -O3
-CFLAGS     = -Wall -mcpu=cortex-m4 -mtune=cortex-m4 -mlittle-endian -mfloat-abi=hard -mfpu=fpv4-sp-d16  -mthumb -I ../../inc/ -D ARM_MATH_CM4 -D __FPU_PRESENT $(OPTIMIZE)
+CFLAGS     = -Wall -mcpu=cortex-m4 -mtune=cortex-m4 -mlittle-endian -mfloat-abi=hard -mfpu=fpv4-sp-d16  -mthumb -I ../../inc/ -D ARM_MATH_CM4 -D __FPU_PRESENT=1 $(OPTIMIZE)
 LIBFILE		= ../arm_math.a
 
 all: $(LIBFILE)
