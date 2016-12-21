@@ -1,3 +1,4 @@
+-include .prjconf.mk
 PRJ_NAME   = BeatDetection
 CC         = arm-none-eabi-gcc
 SRC        = $(wildcard src/*.c)
@@ -7,7 +8,6 @@ LIB        = lib/arm_math.a
 OBJCOPY    = arm-none-eabi-objcopy
 OBJDUMP    = arm-none-eabi-objdump
 PROGRAMMER = openocd
-PGFLAGS    = -f interface/stlink-v2.cfg -f target/stm32f4x.cfg -c "program $(PRJ_NAME).elf verify reset" -c shutdown
 DEVICE     = STM32F407xx
 OPTIMIZE   = -Og
 DBGFLAGS   = -g3
@@ -16,11 +16,26 @@ CFLAGS     = -Wall -mcpu=cortex-m4 -mtune=cortex-M4 -mlittle-endian -mfloat-abi=
 ASFLAGS    =  $(CFLAGS)
 LDFLAGS    = -T $(LDSCRIPT) -Wl,--gc-sections --specs=nano.specs --specs=nosys.specs
 
+.PHONY: all debug burn clean config rst fast fastd
+
+ifeq ($(CONF), true)
+
 all: CFLAGS += $(OPTIMIZE)
 all: $(PRJ_NAME).elf
 
 debug: CFLAGS += $(DBGFLAGS)
 debug: $(PRJ_NAME).elf
+
+burn:
+	$(PROGRAMMER) $(PGFLAGS)
+
+else
+
+all: config
+debug: config
+burn: config
+
+endif
 
 $(PRJ_NAME).elf: $(LIB) $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) $(LIB) -o $@ $(LDFLAGS)
@@ -39,8 +54,8 @@ clean:
 	$(MAKE) clean -C lib
 	rm -f $(OBJ) *.map *.elf *.hex
 
-burn:
-	$(PROGRAMMER) $(PGFLAGS)
+config:
+	./config
 
 rst:
 
