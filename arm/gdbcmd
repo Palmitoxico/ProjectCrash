@@ -1,3 +1,14 @@
 target remote localhost:3333
 monitor reset halt
+python
+from subprocess import call
+class fastd (gdb.Command):
+  """Compile and upload"""
+  def __init__ (self):
+    super (fastd, self).__init__ ("fastd", gdb.COMMAND_USER)
+  def invoke (self, args, from_tty):
+    call(["make", "debug"])
+    gdb.execute("load")
+fastd()
+end
 
