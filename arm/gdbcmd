@@ -9,6 +9,8 @@ class fastd (gdb.Command):
   def invoke (self, args, from_tty):
     call(["make", "debug"])
     gdb.execute("load")
+    gdb.execute("tb main")
+    gdb.execute("c")
 fastd()
 end
 
