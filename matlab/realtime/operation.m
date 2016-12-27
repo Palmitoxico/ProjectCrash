@@ -1,11 +1,11 @@
 function result = operation(data,FILT, fs)
 
 n = size(FILT, 2);
+result = 0;
 
 for i = 1 : n/2                     % creates filters and performs operation
     odd = 1:2:n;
     even = 2:2:n;
-    result = 0;
 
     [B, A] = butter(2,FILT([odd(i) even(i)]));
 
