@@ -14,7 +14,7 @@ function [m, v, score_mean, t] = make_and_eval_test(directory,window)
     audiosize = size(audio,1);
 
 
-    k = 0;          % window index
+    k = 1;          % window index
     t = [];         % beats
     beat_index = 1;
 
