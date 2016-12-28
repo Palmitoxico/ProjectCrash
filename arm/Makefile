@@ -9,8 +9,8 @@ OBJCOPY    = arm-none-eabi-objcopy
 OBJDUMP    = arm-none-eabi-objdump
 PROGRAMMER = openocd
 DEVICE     = STM32F407xx
-OPTIMIZE   = -Og
-DBGFLAGS   = -g3
+OPTIMIZE   = -O3
+DBGFLAGS   = -g3 -Og
 LDSCRIPT   = stm32f407vgtx.ld
 CFLAGS     = -Wall -mcpu=cortex-m4 -mtune=cortex-M4 -mlittle-endian -mfloat-abi=hard -mfpu=fpv4-sp-d16  -mthumb -D ARM_MATH_CM4 -I inc/ -D $(DEVICE)
 ASFLAGS    =  $(CFLAGS)
