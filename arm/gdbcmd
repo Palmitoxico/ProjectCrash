@@ -12,5 +12,15 @@ class fastd (gdb.Command):
     gdb.execute("tb main")
     gdb.execute("c")
 fastd()
+
+class rst (gdb.Command):
+  """Reset the microcontroller"""
+  def __init__ (self):
+    super (rst, self).__init__ ("rst", gdb.COMMAND_USER)
+  def invoke (self, args, from_tty):
+    gdb.execute("monitor reset halt")
+    gdb.execute("tb main")
+    gdb.execute("c")
+rst()
 end
 
