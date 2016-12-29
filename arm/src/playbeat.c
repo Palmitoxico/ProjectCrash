@@ -8,7 +8,7 @@
 #define BeatsBufferSize 16
 #define GPIO_MODER_MODER12_Pos 24
 
-volatile uint64_t UniversalTime = 1, BeatMarks[BeatsBufferSize];
+static volatile uint64_t UniversalTime = 1, BeatMarks[BeatsBufferSize];
 
 /*
  * Initializes the beat sequencer
