@@ -1,5 +1,6 @@
 target remote localhost:3333
 monitor reset halt
+set max-value-size 2000000
 python
 from subprocess import call
 class fastd (gdb.Command):
