@@ -110,12 +110,12 @@ int32_t I2SInit(I2SConfig * conf)
 	/*
 	 * I2S PLL configuration
 	 * Source: 2MHz
-	 * Multiplier: 192
-	 * Divider: 3
-	 * Final clock: 128Mhz
+	 * Multiplier: 128
+	 * Divider: 5
+	 * Final clock: 51.2Mhz
 	 */
-	RCC->PLLI2SCFGR = (192 << RCC_PLLI2SCFGR_PLLI2SN_Pos) |
-		(3 << RCC_PLLI2SCFGR_PLLI2SR_Pos);
+	RCC->PLLI2SCFGR = (128 << RCC_PLLI2SCFGR_PLLI2SN_Pos) |
+		(5 << RCC_PLLI2SCFGR_PLLI2SR_Pos);
 	RCC->CR |= RCC_CR_PLLI2SON;
 
 	/*
@@ -138,10 +138,11 @@ int32_t I2SInit(I2SConfig * conf)
 	/*
 	 * Configures the I2S as master
 	 * receive.
-	 * Prescaler: 125
+	 * Prescaler: 25
+	 * I2S2 clock: 2.048MHz
 	 */
 	SPI2->I2SCFGR = SPI_I2SCFGR_I2SMOD | (3 << SPI_I2SCFGR_I2SCFG_Pos);
-	SPI2->I2SPR = SPI_I2SPR_ODD | (62 << SPI_I2SPR_I2SDIV_Pos);
+	SPI2->I2SPR = SPI_I2SPR_ODD | (12 << SPI_I2SPR_I2SDIV_Pos);
 
 	/*
 	 * DMA initialization
