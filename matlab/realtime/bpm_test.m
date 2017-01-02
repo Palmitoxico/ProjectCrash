@@ -9,5 +9,5 @@ pitch_array = zeros(1, col-1);
 for j = 2 : col                             % ignores the first block
   pitch_array(j-1) = 60*fs/pitch_acc(buf(:,j));
 end;
-
+%pitch_array
 bpm = median(pitch_array);

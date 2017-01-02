@@ -1,3 +1,26 @@
+
+
+float32_t pitch_acc(float32_t *samples, uint32_t size) {
+/*
+  X = fft(x, length(x)*2);
+  x_acc = abs(ifft(X .* conj(X)));
+*/
+  float32_t max_so_far = -1;
+  float32_t acc0;
+  uint32_t max_i = 0;
+  uint32_t i;
+
+  for (i=0; i < (size/2); i++) {
+    acc0 = X_acc[i] - X_acc[i/2];
+    if (acc0 > max_so_far) {
+      max_so_far = acc0;
+      max_i = i;
+    }
+  }
+  return (float32_t) i;
+
+}
+
 function k = pitch_acc(x)
 % function k = pitch_acc(x)
 %
@@ -16,28 +39,13 @@ x_acc = abs(ifft(X .* conj(X)));
 x_acc0 = zeros(1,floor(length(x_acc)/2));
 max_so_far = -100;
 max_i = 0;
-for i = 1 : floor(length(x_acc0)/2);
-  x_acc0(i) = x_acc(i) - x_acc(i*2) - x_acc(i*4);
+for i = 1000 : floor(length(x_acc0)/2);
+  x_acc0(i) = x_acc(i);% - x_acc(i*2);
   if x_acc0(i) > max_so_far
     max_so_far = x_acc0(i);
     max_i = i;
   end;
 end
-
-
-if max_i > 1
-    X = [(max_i-1)^2 max_i-1 1;
-         max_i^2 max_i 1;
-         (max_i+1)^2 max_i+1 1];
-
-    c = inv(X);
-    y = [x_acc0(max_i-1); x_acc0(max_i); x_acc0(max_i+1)];
-    coef = c * y;
-    if coef(1) ~= 0
-      max_i = -coef(2)/(2*coef(1));
-    end
-end
-
 
 %figure;
 %plot(x_acc0);
