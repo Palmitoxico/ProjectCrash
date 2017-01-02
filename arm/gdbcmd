@@ -1,6 +1,7 @@
 target remote localhost:3333
 monitor reset halt
 set max-value-size 2000000
+
 python
 from subprocess import call
 class fastd (gdb.Command):
@@ -23,5 +24,17 @@ class rst (gdb.Command):
     gdb.execute("tb main")
     gdb.execute("c")
 rst()
+
+class cycs (gdb.Command):
+  """Count the number of cpu cycles until the next breakpoint"""
+  def __init__ (self):
+    super (cycs, self).__init__ ("cycs", gdb.COMMAND_USER)
+  def invoke (self, args, from_tty):
+    gdb.execute("set DWT->CYCCNT = 0")
+    gdb.execute("c")
+    gdb.write ("\n\nElapsed cyles:\n")
+    gdb.execute("p DWT->CYCCNT")
+    gdb.write ("\n(gdb) ")
+cycs()
 end
 
