@@ -7,7 +7,7 @@
 
 #define DMABufferSize		2048
 #define AudioBufferSize		64000
-#define BitExpandBufferSize	512
+#define FIRIntputBlockSize	1024
 #define FIRDecimationFactor	128
 
 /*
@@ -19,13 +19,15 @@
 static volatile uint16_t DMAI2SBuffer0[DMABufferSize] __attribute__ ((aligned (4)));
 static volatile uint16_t DMAI2SBuffer1[DMABufferSize] __attribute__ ((aligned (4)));
 static volatile int8_t Audio[AudioBufferSize];
-static volatile arm_fir_decimate_instance_f32 dec_filter;
-static volatile float32_t FIRState[FIR_COEFFS_LEN + BitExpandBufferSize - 1];
+static volatile arm_fir_decimate_instance_q15 dec_filter;
+static volatile q15_t FIRState[FIR_COEFFS_LEN + FIRIntputBlockSize - 1];
 
 int main()
 {
 	I2SConfig MicI2S;
-
+	CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+	DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+	
 	/*
 	 * Initialize the structure of the
 	 * decimation FIR filter:
@@ -98,37 +100,16 @@ int main()
 }
 
 /*
- * Convert a array of floats into
- * an array of 8 bit signed integers.
+ * Convert a array of q15 fractional
+ * numbers into an array of 8 bit signed
+ * integers.
  */
-void ConvF32Int8(const float32_t *fnum, int8_t *inum, uint32_t size)
+void ConvQ15Int8(const q15_t *fnum, int8_t *inum, uint32_t size)
 {
 	uint32_t index;
 	for (index = 0; index < size; index++)
 	{
-		inum[index] = fnum[index];
-	}
-}
-
-/*
- * Expand a bitstream into a array
- * of float point values with an
- * amplitude equals 2*Gain.
- */
-void BitExpandF32(const uint16_t *BitStream, float32_t *Result, uint32_t NumOfBits, uint16_t Gain)
-{
-	int BitIndex;
-
-	for (BitIndex = 0; BitIndex < NumOfBits; BitIndex++)
-	{
-		if ((BitStream[BitIndex >> 4] & ((uint16_t)0x8000 >> (BitIndex & 0x0F))) != 0)
-		{
-			Result[BitIndex] = Gain;
-		}
-		else
-		{
-			Result[BitIndex] = -Gain;
-		}
+		inum[index] = (int16_t)fnum[index] / 32;
 	}
 }
 
@@ -137,9 +118,8 @@ void BitExpandF32(const uint16_t *BitStream, float32_t *Result, uint32_t NumOfBi
  */
 void DMA1_Stream3_IRQHandler()
 {
-	static uint32_t AudioIndex = 0, Discard = 128;
-	float32_t BitExpandBuffer[BitExpandBufferSize];
-	float32_t FIROut[BitExpandBufferSize / FIRDecimationFactor];
+	static uint32_t AudioIndex = 0, Discard = 64;
+	q15_t FIROut[FIRIntputBlockSize / FIRDecimationFactor];
 
 	/*
 	 * Clears the Transfer Complete
@@ -172,42 +152,34 @@ void DMA1_Stream3_IRQHandler()
 
 		/*
 		 * Apply the FIR decimation filter in
-		 * blocks of BitExpandBufferSize bits.
+		 * blocks of FIRIntputBlockSize bits.
 		 */
 		for (DMABufferIndex = 0;
 			 DMABufferIndex < (sizeof(DMAI2SBuffer0) / sizeof(buff[0]));
-			 DMABufferIndex += (BitExpandBufferSize / (sizeof(buff[0]) * 8)))
+			 DMABufferIndex += (FIRIntputBlockSize / (sizeof(buff[0]) * 8)))
 		{
-			/*
-			 * Expand the PDM bit stream into
-			 * a array of floats for the FIR
-			 * decimation filter with +-512
-			 * amplitude.
-			 */
-			BitExpandF32(&buff[DMABufferIndex], BitExpandBuffer, BitExpandBufferSize, 512);
-
 			/*
 			 * Decimate the sample
 			 */
-			arm_fir_decimate_f32(&dec_filter, BitExpandBuffer, FIROut, BitExpandBufferSize);
+			arm_bit_fir_decimate_q15(&dec_filter, &buff[DMABufferIndex], FIROut, FIRIntputBlockSize);
 
 			/*
-			 * Convert the floating point output
+			 * Convert the fixed point output
 			 * of the FIR filter into a signed
 			 * 8 bit PCM format and store it in
 			 * the apropriate position of the
 			 * Audio buffer.
 			 */
-			ConvF32Int8(FIROut, &Audio[AudioIndex], BitExpandBufferSize / FIRDecimationFactor);
+			ConvQ15Int8(FIROut, &Audio[AudioIndex], FIRIntputBlockSize / FIRDecimationFactor);
 
 			/*
 			 * Update the Audio buffer index.
 			 */
-			AudioIndex += BitExpandBufferSize / FIRDecimationFactor;
+			AudioIndex += FIRIntputBlockSize / FIRDecimationFactor;
 		}
 
 		/*
-		 * Discard the first 128 samples
+		 * Discard the first 64 samples
 		 * to avoid transients.
 		 */
 		if (Discard > 0)
@@ -230,5 +202,4 @@ void DMA1_Stream3_IRQHandler()
 	{
 		__BKPT(0xE0);
 	}
-
 }

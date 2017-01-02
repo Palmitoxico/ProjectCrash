@@ -114,7 +114,7 @@ int32_t I2SInit(I2SConfig * conf)
 	 * Divider: 5
 	 * Final clock: 51.2Mhz
 	 */
-	RCC->PLLI2SCFGR = (128 << RCC_PLLI2SCFGR_PLLI2SN_Pos) |
+	RCC->PLLI2SCFGR = (64 << RCC_PLLI2SCFGR_PLLI2SN_Pos) |
 		(5 << RCC_PLLI2SCFGR_PLLI2SR_Pos);
 	RCC->CR |= RCC_CR_PLLI2SON;
 

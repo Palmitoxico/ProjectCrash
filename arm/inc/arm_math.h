@@ -3344,6 +3344,19 @@ void arm_rfft_fast_f32(
   q15_t * pDst,
   uint32_t blockSize);
 
+  /**
+   * @brief Processing function for the Q15 FIR decimator (bit version).
+   * @param[in]  S          points to an instance of the Q15 FIR decimator structure.
+   * @param[in]  pSrc       points to the block of input data (bit stream), read each 16 bit word from MSB to LSB.
+   * @param[out] pDst       points to the block of output data
+   * @param[in]  blockSize  number of input samples to process per call.
+   */
+  void arm_bit_fir_decimate_q15(
+  const arm_fir_decimate_instance_q15 * S,
+  uint16_t * pSrc,
+  q15_t * pDst,
+  uint32_t blockSize);
+
 
   /**
    * @brief Processing function for the Q15 FIR decimator (fast variant) for Cortex-M3 and Cortex-M4.

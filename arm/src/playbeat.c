@@ -45,9 +45,9 @@ void PlayBeatInit()
 	
 	/*
 	 * Enable the SysTick Timer interrupt
-	 * with priority 8 of 15
+	 * with priority 0 of 15
 	 */
-	NVIC_SetPriority(SysTick_IRQn, 8);
+	NVIC_SetPriority(SysTick_IRQn, 0);
 	NVIC_EnableIRQ(SysTick_IRQn);
 	__enable_irq();
 
