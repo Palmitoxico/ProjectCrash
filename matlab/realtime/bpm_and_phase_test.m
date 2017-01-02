@@ -13,7 +13,8 @@ audio = downsample(audio, down_factor);
 FILT = filter_gen(n_filters, fator, init_freq, fs/down_factor);
 onsets = operation(audio, FILT);
 % Soma dos modulos do quadro (ou da energia do quadro)
-% Quadros de 10ms (256 amostras ou 512 amostras)
+% Quadros de 32 amostras (250 Hz de amostragem)
+
 
 bpmfs = bpm_test(onsets,fs/down_factor,window,overlap,down_factor);
 

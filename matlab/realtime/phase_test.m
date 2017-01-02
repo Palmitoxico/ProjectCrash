@@ -8,15 +8,17 @@ for i = 1 : period
   % Generate new pulse train
   x = zeros(size(signal));
   j = i;
-  
+
+  % inicializa variavel de acc = 0
   while j < length(signal)
     x(ceil(j)) = 1;
+    % acc += x(ceil(j))
     j = j + period;
   end
-  
+
   c = corr(x, signal);
   c0 = [c0 c];
-  
+
   if c > max_corr
     best_phase = i;
     max_corr = c;
