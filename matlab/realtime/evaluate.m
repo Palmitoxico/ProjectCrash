@@ -13,7 +13,7 @@
 
 function [r, p, F] = evaluate(y, d)
 
-% tolerance in ms
+% tolerance in s
 e = 0.175;
 
 % order the arrays
