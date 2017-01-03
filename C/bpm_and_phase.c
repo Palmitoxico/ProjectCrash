@@ -1,4 +1,4 @@
-float32_t bpm_and_phase(float32_t *onsets, uint32_t onsets_size, uint32_t fs, uint32_t size, uint32_t flag_result)
+float32_t bpm_and_phase(float32_t *onsets, uint32_t onsets_size, uint32_t fs, uint32_t size, uint32_t flag_result) // flag to return phase or final bpm. Default to bpm
 {
 	float32_t n;
 	float32_t phase;
