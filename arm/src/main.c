@@ -6,7 +6,7 @@
 #include "autogen_fir_coeffs.h"
 
 #define DMABufferSize		2048
-#define AudioBufferSize		64000
+#define AudioBufferSize		32000
 #define FIRIntputBlockSize	1024
 #define FIRDecimationFactor	128
 
@@ -18,9 +18,12 @@
  */
 static volatile uint16_t DMAI2SBuffer0[DMABufferSize] __attribute__ ((aligned (4)));
 static volatile uint16_t DMAI2SBuffer1[DMABufferSize] __attribute__ ((aligned (4)));
-static volatile int8_t Audio[AudioBufferSize];
+static volatile int8_t Audio0[AudioBufferSize];
+static volatile int8_t Audio1[AudioBufferSize];
+static volatile int8_t AudioBufferSelect = -1;
 static volatile arm_fir_decimate_instance_q15 dec_filter;
 static volatile q15_t FIRState[FIR_COEFFS_LEN + FIRIntputBlockSize - 1];
+static volatile uint32_t AudioAcc = 0;
 
 int main()
 {
@@ -102,14 +105,23 @@ int main()
 /*
  * Convert a array of q15 fractional
  * numbers into an array of 8 bit signed
- * integers.
+ * integers and accumulate the absolute
+ * value of the samples.
  */
-void ConvQ15Int8(const q15_t *fnum, int8_t *inum, uint32_t size)
+void ConvQ15Int8(const q15_t *fnum, int8_t *inum, uint32_t size, uint32_t *acc)
 {
 	uint32_t index;
+	int8_t tmp;
+
 	for (index = 0; index < size; index++)
 	{
-		inum[index] = (int16_t)fnum[index] / 32;
+		tmp = (int16_t)fnum[index] / 32;
+		inum[index] = tmp;
+
+		/*
+		 * Accumulate the abs value of tmp
+		 */
+		*acc += (tmp > 0) ? tmp : -tmp;
 	}
 }
 
@@ -120,6 +132,9 @@ void DMA1_Stream3_IRQHandler()
 {
 	static uint32_t AudioIndex = 0, Discard = 64;
 	q15_t FIROut[FIRIntputBlockSize / FIRDecimationFactor];
+	int8_t *SelectedPCMBuffer = Audio0;
+	uint16_t *buff, DMABufferIndex;
+	static uint32_t AudioAccTmp = 0;
 
 	/*
 	 * Clears the Transfer Complete
@@ -128,65 +143,78 @@ void DMA1_Stream3_IRQHandler()
 	DMA1->LIFCR = DMA_LIFCR_CTCIF3;
 
 	/*
-	 * If there is enough space available
-	 * in the Audio buffer, process the
-	 * PDM signal from the microphone and
-	 * convert it to a signed 8 bit PCM
-	 * sinal (16KHz)
+	 * Audio double buffering
+	 *
+	 * The AudioBufferSelect variable informs to
+	 * the rest of the program what audio buffer
+	 * is full and ready to be processed.
 	 */
-	if (AudioIndex < AudioBufferSize)
+	if (AudioIndex >= AudioBufferSize)
 	{
-		uint16_t *buff, DMABufferIndex;
-
-		/*
-		 * Selects the last filled buffer
-		 */
-		if(DMA1_Stream3->CR & DMA_SxCR_CT)
+		if (AudioBufferSelect == 0)
 		{
-			buff = (uint16_t *) DMA1_Stream3->M0AR;
+			AudioBufferSelect = 1;
+			SelectedPCMBuffer = Audio0;
 		}
 		else
 		{
-			buff = (uint16_t *) DMA1_Stream3->M1AR;
+			AudioBufferSelect = 0;
+			SelectedPCMBuffer = Audio1;
 		}
+		AudioIndex = 0;
+		AudioAcc = AudioAccTmp;
+		AudioAccTmp = 0;
+	}
+
+	/*
+	 * Selects the last filled buffer
+	 */
+	if(DMA1_Stream3->CR & DMA_SxCR_CT)
+	{
+		buff = (uint16_t *) DMA1_Stream3->M0AR;
+	}
+	else
+	{
+		buff = (uint16_t *) DMA1_Stream3->M1AR;
+	}
+
+	/*
+	 * Apply the FIR decimation filter in
+	 * blocks of FIRIntputBlockSize bits.
+	 */
+	for (DMABufferIndex = 0;
+		 DMABufferIndex < (sizeof(DMAI2SBuffer0) / sizeof(buff[0]));
+		 DMABufferIndex += (FIRIntputBlockSize / (sizeof(buff[0]) * 8)))
+	{
+		/*
+		 * Decimate the sample
+		 */
+		arm_bit_fir_decimate_q15(&dec_filter, &buff[DMABufferIndex], FIROut, FIRIntputBlockSize);
 
 		/*
-		 * Apply the FIR decimation filter in
-		 * blocks of FIRIntputBlockSize bits.
+		 * Convert the fixed point output
+		 * of the FIR filter into a signed
+		 * 8 bit PCM format and store it in
+		 * the apropriate position of the
+		 * Audio buffer.
 		 */
-		for (DMABufferIndex = 0;
-			 DMABufferIndex < (sizeof(DMAI2SBuffer0) / sizeof(buff[0]));
-			 DMABufferIndex += (FIRIntputBlockSize / (sizeof(buff[0]) * 8)))
-		{
-			/*
-			 * Decimate the sample
-			 */
-			arm_bit_fir_decimate_q15(&dec_filter, &buff[DMABufferIndex], FIROut, FIRIntputBlockSize);
-
-			/*
-			 * Convert the fixed point output
-			 * of the FIR filter into a signed
-			 * 8 bit PCM format and store it in
-			 * the apropriate position of the
-			 * Audio buffer.
-			 */
-			ConvQ15Int8(FIROut, &Audio[AudioIndex], FIRIntputBlockSize / FIRDecimationFactor);
-
-			/*
-			 * Update the Audio buffer index.
-			 */
-			AudioIndex += FIRIntputBlockSize / FIRDecimationFactor;
-		}
+		ConvQ15Int8(FIROut, &SelectedPCMBuffer[AudioIndex], FIRIntputBlockSize / FIRDecimationFactor, &AudioAccTmp);
 
 		/*
-		 * Discard the first 64 samples
-		 * to avoid transients.
+		 * Update the Audio buffer index.
 		 */
-		if (Discard > 0)
-		{
-			Discard--;
-			AudioIndex = 0;
-		}
+		AudioIndex += FIRIntputBlockSize / FIRDecimationFactor;
+	}
+
+	/*
+	 * Discard the first 64 samples
+	 * to avoid transients.
+	 */
+	if (Discard > 0)
+	{
+		Discard--;
+		AudioIndex = 0;
+		AudioAccTmp = 0;
 	}
 
 	/*
