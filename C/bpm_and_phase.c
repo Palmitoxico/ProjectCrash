@@ -1,7 +1,7 @@
 void bpm_and_phase(int8_t *audio, float32_t *phase, float32_t *bpmfs) 
 {
 	float32_t n;
-	int8_t onsets[1000];
+	int16_t onsets[1000];
 	onsets[0] = 0;
 	int8_t i, j;
 	int8_t k = 0;
@@ -9,16 +9,8 @@ void bpm_and_phase(int8_t *audio, float32_t *phase, float32_t *bpmfs)
 
 	for (i = 0; i < 32000; i++)
 	{
-		audio[i] = audio[i]*audio[i];
-		if (i == 31 + 32*k)
-		{
-			for (j = 1; j < 32; j++)
-			{
-				audio[i] = audio[i] + audio[i-j];
-			}
-			onsets[k] = onsets[k] + audio[i];
-			k += 1;
-		}
+		if((i%32) == 0) onsets[i%32] = 0;
+		onsets[i%32] += audio[i]*audio[i];
 	}
 
 	for (i = 0; i < 999; i++)
