@@ -44,6 +44,7 @@ function [f, m, amlt, score_mean] = make_and_eval(directory)
 		fid = fopen(textFileName, 'w');
 		fprintf(fid,'%f\n',t);
 		fclose(fid);
+        
     %calculates the f-measure and the amlt
     [mainscore(i), ~]= beatEvaluator(t,ref);
     [r(i), p(i), f(i)] = evaluate(t, ref);
