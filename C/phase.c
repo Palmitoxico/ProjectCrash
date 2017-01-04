@@ -1,4 +1,4 @@
-float32_t phase(uint32_t period, int8_t *onsets, uint32_t onsets_size)
+float32_t phase(uint32_t period, int16_t *onsets, uint32_t onsets_size)
 {
 	float32_t max_corr = 0;
 	float32_t best_phase = 0;
