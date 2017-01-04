@@ -9,10 +9,6 @@ void bpm_and_phase(int8_t *audio, float32_t *phase, float32_t *bpmfs)
 
 	for (i = 0; i < 32000; i++)
 	{
-		if (audio[i] < 0)
-		{
-			audio[i] = audio[i]*(-1);
-		}
 		audio[i] = audio[i]*audio[i];
 		if (i == 31 + 32*k)
 		{
@@ -38,9 +34,9 @@ void bpm_and_phase(int8_t *audio, float32_t *phase, float32_t *bpmfs)
 	// apply a low pass filter in array onsets at 12,5Hz
 
 	*bpmfs = bpm(onsets, 250, 999);
-	if(bpmfs != 0)
+	if(*bpmfs != 0)
 	{
-		n = phase(250*(1/(bpmf/60)), onsets, 999);
+		n = phase(250*(1/(*bpmfs/60)), onsets, 999);
 		*phase = n/250;
 	}
 	else
