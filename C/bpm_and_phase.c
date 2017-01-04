@@ -1,4 +1,4 @@
-float32_t bpm_and_phase(int8_t *audio, int8_t flag_result) // flag to return phase or final bpm. Default to bpm
+void bpm_and_phase(int8_t *audio, float32_t *phase, float32_t *bpmfs) 
 {
 	float32_t n;
 	float32_t phase;
@@ -35,6 +35,7 @@ float32_t bpm_and_phase(int8_t *audio, int8_t flag_result) // flag to return pha
 		}
 	}
 	onsets[1000] = 0;
+
 	// apply a low pass filter in array onsets at 12,5Hz
 
 	float32_t bpmfs = bpm(onsets, 250, 999);
@@ -47,12 +48,5 @@ float32_t bpm_and_phase(int8_t *audio, int8_t flag_result) // flag to return pha
 	{
 		phase = 0;
 	}
-	if(flag_result == 1)
-	{
-		return phase;
-	}
-	else
-	{
-		return bpmfs;
-	}
+	
 }
