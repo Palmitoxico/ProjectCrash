@@ -1,9 +1,9 @@
 #include "stm32f407xx.h"
 #include "arm_math.h"
 #include "clockconfig.h"
-#include "playbeat.h"
 #include "i2s.h"
 #include "autogen_fir_coeffs.h"
+#include "findbeat.h"
 
 #define DMABufferSize		2048
 #define AudioBufferSize		32000
@@ -97,7 +97,19 @@ int main()
 	 */
 	while(1)
 	{
-		
+		if (AudioAcc > 500000)
+		{
+			if (AudioBufferSelect == 0)
+			{
+				bpm_and_phase(Audio0);
+				while(AudioBufferSelect == 0);
+			}
+			else if (AudioBufferSelect == 1)
+			{
+				bpm_and_phase(Audio1);
+				while(AudioBufferSelect == 1);
+			}
+		}
 	}
 	return 0;
 }
