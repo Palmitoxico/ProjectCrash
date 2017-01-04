@@ -8,7 +8,7 @@
 #define __FPU_PRESENT 1U
 #include "arm_math.h"
 
-#define LowPassCoeffSize 23;
-extern q15_t LowPassCoeff[LowPassCoeffSize];
+#define LowPassCoeffSize 23
+extern const q15_t LowPassCoeff[LowPassCoeffSize];
 
 #endif
