@@ -10,9 +10,9 @@ float32_t pitch_acc(float32_t *samples, uint32_t size) {
   float32_t max_so_far = -1;
   float32_t acc0;
   uint32_t max_i = 0;
-  uint32_t i;
+  uint32_t i, j;
   // Calculate autocorrelation
-  
+
   for (i = 0; i < size; i++)
   {
     for (j = i; j < size; j++)
