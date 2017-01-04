@@ -8,6 +8,7 @@ function [m, v, score_mean, t] = make_and_eval_test(directory,window)
   p = [];
   f = [];
   amlt = [];
+  
  for i = 1:length(d)
     ref = load([directory  '/'  d2(i).name]);
     [audio,fs,~] = wavread([directory  '/'  d(i).name]);
@@ -25,7 +26,8 @@ function [m, v, score_mean, t] = make_and_eval_test(directory,window)
             window_end = audiosize;
         end
 
-        [bpm, phase] = bpm_and_phase_test(audio(j:window_end,1),fs);
+        [bpm, phase] = bpmfs_phase(audio(j:window_end,1),fs);
+
         if bpm ~= 0
             aux = bpm_phase_beats_test(bpm,phase,window);
             s = size(aux,2);
@@ -40,12 +42,12 @@ function [m, v, score_mean, t] = make_and_eval_test(directory,window)
     [r(i), p(i), f(i)] = evaluate(t, ref);
     f0 = [f0 f(i)];
     amlt = [amlt mainscore(i)];
-   end;
+ end
   r
   p
   f
   amlt
   m = mean(f0);
   v = var(f0);
-  score_mean = mean(amlt)
+  score_mean = mean(amlt);
 
