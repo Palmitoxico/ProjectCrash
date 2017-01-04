@@ -19,8 +19,8 @@ void FindBeatInit()
 
 uint32_t pitch_acc(int16_t *samples, uint32_t size)
 {
-	int32_t max_so_far = -1;
-	int32_t acc0;
+	float32_t max_so_far = -1000000.0;
+	float32_t acc0;
 	uint32_t max_i = 0;
 	uint32_t i, j;
 	float32_t X_acc[1000];
@@ -34,7 +34,7 @@ uint32_t pitch_acc(int16_t *samples, uint32_t size)
 		}
 	}
 
-	for (i=0; i < (size/2); i++)
+	for (i = 20; i < (size/2); i++)
 	{
 		acc0 = X_acc[i] - X_acc[i/2];
 		if (acc0 > max_so_far)
@@ -70,13 +70,13 @@ float32_t phase(uint32_t period, int16_t *onsets, uint32_t onsets_size)
 			j = j + period;
 		}
 
-		if(acc < max_corr)
+		if(acc > max_corr)
 		{
 			best_phase = i;
 			max_corr = acc;
 		}
 	}
-	return best_phase -1;
+	return best_phase;
 }
 
 void bpm_phase_beats(float32_t bpm, float32_t phase, uint32_t onsets_size, int32_t fs)
@@ -91,7 +91,7 @@ void bpm_phase_beats(float32_t bpm, float32_t phase, uint32_t onsets_size, int32
 
 	while(i < onsets_size/fs)
 	{
-		MarkBeat((uint32_t)i*1000);
+		MarkBeat(i*1000);
 		i = i + beats_period;
 	}
 }
