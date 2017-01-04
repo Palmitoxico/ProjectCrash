@@ -1,15 +1,15 @@
-float32_t phase(uint32_t period, int16_t *onsets, uint32_t onsets_size)
+float32_t phase(uint32_t period, int16_t *onsets)
 {
 	float32_t max_corr = 0;
 	float32_t best_phase = 0;
 	uint32_t i;
 	for(i = 0; i < period; i++)
 	{
-		float32_t x[onsets_size];
+		float32_t x[1000];
 		float32_t acc = 0;
 		uint32_t j = i;
 
-		while(j < onsets_size)
+		while(j < 1000)
 		{
 			x[j] = 1;
 			acc += x[j];
