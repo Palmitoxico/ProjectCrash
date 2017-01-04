@@ -5,10 +5,21 @@ float32_t pitch_acc(float32_t *samples, uint32_t size) {
   X = fft(x, length(x)*2);
   x_acc = abs(ifft(X .* conj(X)));
 */
+
+  float32_t X_acc[1000];
   float32_t max_so_far = -1;
   float32_t acc0;
   uint32_t max_i = 0;
   uint32_t i;
+  // Calculate autocorrelation
+  
+  for (i = 0; i < size; i++)
+  {
+    for (j = i; j < size; j++)
+    {
+      X_acc[i] = X_acc[i] + samples[j]*samples[j-i];
+    }
+  }
 
   for (i=0; i < (size/2); i++) {
     acc0 = X_acc[i] - X_acc[i/2];
