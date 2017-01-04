@@ -30,7 +30,7 @@ function [f, m, amlt, score_mean] = make_and_eval(directory)
         % calculates and marks the beats
         [bpm, phase] = bpm_phase(audio(j:window_end,1),fs);
 
-        if bpm ~= 0
+        if bpm > 0
             aux = markBeats(bpm,phase,window);
             s = size(aux,2);
             aux = aux + k*window;
@@ -40,7 +40,11 @@ function [f, m, amlt, score_mean] = make_and_eval(directory)
         end
 
     end
-    % calculates the f-measure and the amlt
+    textFileName = ['beats' num2str(i) '.txt'];
+		fid = fopen(textFileName, 'w');
+		fprintf(fid,'%f\n',t);
+		fclose(fid);
+    %calculates the f-measure and the amlt
     [mainscore(i), ~]= beatEvaluator(t,ref);
     [r(i), p(i), f(i)] = evaluate(t, ref);
     f0 = [f0 f(i)];
