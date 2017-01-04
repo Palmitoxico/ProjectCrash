@@ -14,7 +14,7 @@ void bpm_and_phase(int8_t *audio, float32_t *phase, float32_t *bpmfs)
 		{
 			audio[i] = audio[i]*(-1);
 		}
-		audio[i] = audio[i]**2;
+		audio[i] = audio[i]*audio[i];
 		if (i == 31 + 32*k)
 		{
 			for (j = 1; j < 32; j++)
