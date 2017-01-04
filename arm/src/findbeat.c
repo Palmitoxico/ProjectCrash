@@ -83,6 +83,12 @@ void bpm_phase_beats(float32_t bpm, float32_t phase, uint32_t onsets_size, int32
 {
 	float32_t i = phase;
 	float32_t beats_period = 1/(bpm/60);
+
+	if (beats_period < 0.01)
+	{
+		return;
+	}
+
 	while(i < onsets_size/fs)
 	{
 		MarkBeat((uint32_t)i*1000);
@@ -95,13 +101,12 @@ void bpm_and_phase(int8_t *audio)
 	float32_t phase_val, bpmfs;
 	int16_t onsets[OnsetSize];
 	int16_t filtered_onsets [OnsetSize];
-	onsets[0] = 0;
 	uint32_t i;
 
 	for (i = 0; i < 32000; i++)
 	{
-		if ((i % 32) == 0) onsets[i % 32] = 0;
-		onsets[i % 32] += audio[i]*audio[i];
+		if ((i % 32) == 0) onsets[i / 32] = 0;
+		onsets[i / 32] += (audio[i] > 0) ? audio[i] : -audio[i];
 	}
 
 	for (i = 0; i < 999; i++)

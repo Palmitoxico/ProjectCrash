@@ -64,6 +64,8 @@ int32_t MarkBeat(uint32_t TimeAhead)
 	uint64_t AbsTime = UniversalTime + TimeAhead;
 	uint32_t i;
 
+	if(TimeAhead == 0) AbsTime++;
+
 	for (i = 0; i < BeatsBufferSize; i++)
 	{
 		if (BeatMarks[i] < UniversalTime)
