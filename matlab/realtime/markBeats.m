@@ -1,4 +1,4 @@
-function t = bpm_phase_beats(bpm, phase, window)
+function t = markBeats(bpm, phase, window)
 
 t = [];             % array of marked beats
 i = phase;          % first beat marked 
