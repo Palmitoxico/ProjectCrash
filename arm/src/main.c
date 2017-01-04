@@ -68,6 +68,11 @@ int main()
 	MicI2S.DMABufferWordsLengh = DMABufferSize;
 
 	/*
+	 * Initialize the beat detector state
+	 */
+	FindBeatInit();
+
+	/*
 	 * Initializes the I2S2 peripheral
 	 */
 	I2SInit(&MicI2S);
@@ -95,7 +100,7 @@ int main()
 		 * to avoid trying mark beats in the
 		 * background noise (no music).
 		 */
-		if (AudioAcc > 100000)
+		if (AudioAcc > 300000)
 		{
 			if (AudioBufferSelect == 0)
 			{

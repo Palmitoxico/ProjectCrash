@@ -8,6 +8,15 @@
 static q15_t LowPassState[LowPassCoeffSize + OnsetSize];
 static const arm_fir_instance_q15 LowPassFilter = {LowPassCoeffSize, LowPassState, LowPassCoeff};
 
+void FindBeatInit()
+{
+	uint32_t i;
+	for (i = 0; i < (LowPassCoeffSize + OnsetSize); i++)
+	{
+		LowPassState[i] = 0;
+	}
+}
+
 uint32_t pitch_acc(int16_t *samples, uint32_t size)
 {
 	int32_t max_so_far = -1;
@@ -39,7 +48,7 @@ uint32_t pitch_acc(int16_t *samples, uint32_t size)
 
 float32_t bpm(int16_t *onsets, int32_t fs, uint32_t size)
 {
-	float32_t bpm = 60*fs/pitch_acc(onsets, size);
+	float32_t bpm = 60.0*fs/(float32_t)pitch_acc(onsets, size);
 	return bpm;
 }
 
