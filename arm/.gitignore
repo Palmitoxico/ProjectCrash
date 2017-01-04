@@ -1,0 +1,7 @@
+*.o
+*.a
+*.hex
+*.bin
+*.elf
+*.d
+.prjconf.mk

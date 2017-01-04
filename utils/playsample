@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#
+# ./playsample directory [file index optional]
+# (Plays a raw signed 8 bit 8KHz audio)
+
+if [ -z "$1" ]; then
+	echo "Usage: $0 directory [file index optional]"
+	exit -1
+fi
+
+if [ -z "$2" ]; then
+	flast=-1
+else
+	flast=$(expr $2 - 1)
+fi
+
+file=$(ls -t "$1"*.bin | head "$flast" | tail -n 1)
+
+play -t raw -r 8k -e signed -b 8 -c 1 "$file"

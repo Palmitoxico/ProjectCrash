@@ -11,26 +11,26 @@ function [m, v, score_mean, t] = make_and_eval_test(directory,window)
  for i = 1:length(d)
     ref = load([directory  '/'  d2(i).name]);
     [audio,fs,~] = wavread([directory  '/'  d(i).name]);
-    audiosize = size(audio,1);
-    
+    audiosize = size(audio,1); % Microfone
+
     k = 0;          % window index
     t = [];         % beats
     beat_index = 1;
-    for j = 1:(window*fs):(audiosize)
+    for j = 1:(window*fs):(audiosize) % Para cada quadro
         window_end = j+window*fs;
-        
+
         if window_end > audiosize
             window_end = audiosize;
         end
-        
+
         [bpm, phase] = bpm_and_phase_test(audio(j:window_end,1),fs);
-        
+
         if bpm ~= 0
             aux = bpm_phase_beats_test(bpm,phase,window);
             s = size(aux,2);
             aux = aux + k*window;
             t(1,(beat_index):(beat_index-1+s)) = aux;
-            beat_index = beat_index + s;    
+            beat_index = beat_index + s;
             k = k + 1;
         end
     end
