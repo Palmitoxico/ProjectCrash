@@ -86,18 +86,16 @@ int main()
 	PlayBeatInit();
 
 	/*
-	 * Mark some beats
-	 */
-	MarkBeat(500);
-	MarkBeat(1500);
-	MarkBeat(2500);
-
-	/*
 	 * Infinite loop
 	 */
 	while(1)
 	{
-		if (AudioAcc > 500000)
+		/*
+		 * Test if the energy level is enough
+		 * to avoid trying mark beats in the
+		 * background noise (no music).
+		 */
+		if (AudioAcc > 100000)
 		{
 			if (AudioBufferSelect == 0)
 			{

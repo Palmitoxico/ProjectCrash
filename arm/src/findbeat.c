@@ -7,19 +7,23 @@
 
 static q15_t LowPassState[LowPassCoeffSize + OnsetSize];
 static const arm_fir_instance_q15 LowPassFilter = {LowPassCoeffSize, LowPassState, LowPassCoeff};
-static arm_cfft_radix4_instance FFTInstance;
 
-void FindBeatInit()
-{
-	arm_cfft_radix4_init_q15(&FFTInstance, 1024, 0, 0);
-}
-
-uint32_t pitch_acc(int16_t *onsets, uint32_t size)
+uint32_t pitch_acc(int16_t *samples, uint32_t size)
 {
 	int32_t max_so_far = -1;
 	int32_t acc0;
 	uint32_t max_i = 0;
-	uint32_t i;
+	uint32_t i, j;
+	float32_t X_acc[1000];
+	
+	for (i = 0; i < size; i++)
+	{
+		X_acc[i] = 0;
+		for (j = i; j < size; j++)
+		{
+			X_acc[i] = X_acc[i] + samples[j]*samples[j-i];
+		}
+	}
 
 	for (i=0; i < (size/2); i++)
 	{
@@ -46,7 +50,7 @@ float32_t phase(uint32_t period, int16_t *onsets, uint32_t onsets_size)
 	uint32_t i;
 	for(i = 0; i < period; i++)
 	{
-		float32_t x[onsets_size];
+		float32_t x[1000];
 		float32_t acc = 0;
 		uint32_t j = i;
 
@@ -79,11 +83,11 @@ void bpm_phase_beats(float32_t bpm, float32_t phase, uint32_t onsets_size, int32
 
 void bpm_and_phase(int8_t *audio) 
 {
-	float32_t phase, bpmfs, n;
+	float32_t phase_val, bpmfs;
 	int16_t onsets[OnsetSize];
 	int16_t filtered_onsets [OnsetSize];
 	onsets[0] = 0;
-	int8_t i;
+	uint32_t i;
 
 	for (i = 0; i < 32000; i++)
 	{
@@ -103,17 +107,17 @@ void bpm_and_phase(int8_t *audio)
 	onsets[999] = 0;
 
 	// apply a low pass filter in array onsets at 12,5Hz
-	arm_fir_q15(&LowPassFilter, onsets, filtered_onsets, sizeof(onsets));
+	arm_fir_q15(&LowPassFilter, onsets, filtered_onsets, OnsetSize);
 
 	bpmfs = bpm(filtered_onsets, 250, 999);
 	if(bpmfs > 0.0000035)
 	{
-		phase = phase(15000/(*bpmfs), filtered_onsets, 999) / 250;
+		phase_val = phase(15000/(bpmfs), filtered_onsets, 999) / 250;
 	}
 	else
 	{
-		phase = 0;
+		phase_val = 0;
 	}
 
-	bpm_phase_beats(bpm, phase, sizeof(onsets), 250);
+	bpm_phase_beats(bpmfs, phase_val, sizeof(onsets), 250);
 }
