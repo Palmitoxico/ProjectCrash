@@ -1,12 +1,12 @@
 -include .prjconf.mk
 PRJ_NAME   = BeatDetection
 CC         = arm-none-eabi-gcc
-SRC        = $(wildcard src/*.c)
-ASRC       = $(wildcard src/*.s)
+SRCDIR     = src
+SRC        = $(wildcard $(SRCDIR)/*.c)
+ASRC       = $(wildcard $(SRCDIR)/*.s)
 OBJ        = $(SRC:.c=.o) $(ASRC:.s=.o)
 LIBDIR     = lib
 LIBS       = $(LIBDIR)/arm_math.a
-DEPS       = $(wildcard src/*.h) $(wildcard inc/*.h)
 OBJCOPY    = arm-none-eabi-objcopy
 OBJDUMP    = arm-none-eabi-objdump
 PROGRAMMER = openocd
@@ -43,17 +43,19 @@ $(PRJ_NAME).elf: $(OBJ) $(LIBS)
 	$(CC) $(CFLAGS) $(OBJ) $(LIBS) -o $@ $(LDFLAGS)
 	arm-none-eabi-size $(PRJ_NAME).elf
 
-%.o: %.c $(DEPS)
-	$(CC) -c $(CFLAGS) $< -o $@
-
-%.o: %.s $(DEPS)
-	$(CC) -c $(ASFLAGS) $< -o $@
-
 $(LIBS):
 	$(MAKE) -C $(LIBDIR)
 
 libs:
 	$(MAKE) -C $(LIBDIR)
+
+%.o: %.c $(DEPS)
+	$(CC) -MMD -c $(CFLAGS) $< -o $@
+
+%.o: %.s $(DEPS)
+	$(CC) -MMD -c $(ASFLAGS) $< -o $@
+
+-include $(SRCDIR)/*.d
 
 clean:
 	$(MAKE) clean -C lib
